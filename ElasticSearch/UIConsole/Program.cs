@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Nest;
 using Elasticsearch.Net;
+using SupportLibraryElasticSearch;
 
 namespace UIConsole
 {
@@ -14,27 +15,23 @@ namespace UIConsole
         public static ConnectionSettings settings;
         public static ElasticClient client;
 
-
         static void Main(string[] args)
         {
             node = new Uri("http://172.16.14.205:9200");
-            //var connectionPool = new SingleNodeConnectionPool(node);
-            settings=new ConnectionSettings(node).DefaultIndex("lucene_search");            
+            settings = new ConnectionSettings(node).DefaultIndex("refactored_search");
             client = new ElasticClient(settings);
+            var elasticSearch = new ElasticSearch(client);
 
-            var postDocumenttest = new Postdocument { UserId = 456, PostDate = DateTime.Now, PostText = "Hey this is my first posted Document" };
-            var indexRespose = client.Index(postDocumenttest);
+            //Console.WriteLine(elasticSearch.CreateIndex());
 
-            var searchRespose = client.Search<Postdocument>(s => s.From(0).Size(10)
-            .Query(q => q.Match(m => m.Field(f => f.PostText)
-            .Query("Hey this is my first posted Document"))));
-            var documents = searchRespose.Documents;
-            foreach(var document in documents)
+            var documents = elasticSearch.SearchResult();
+            foreach (var document in documents)
             {
                 Console.WriteLine($" Date posted is : {document.PostDate} User ID : {document.UserId}  POst Text = {document.PostText}");
             }
-            
             Console.ReadKey(true);
         }
+
+
     }
 }
