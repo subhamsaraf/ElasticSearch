@@ -25,10 +25,16 @@ namespace UIConsole
             var postDocumenttest = new Postdocument { UserId = 456, PostDate = DateTime.Now, PostText = "Hey this is my first posted Document" };
             var indexRespose = client.Index(postDocumenttest);
 
-            var searchRespose = client.Search<Postdocument>(s => s.From(0).Size(0)
+            var searchRespose = client.Search<Postdocument>(s => s.From(0).Size(10)
             .Query(q => q.Match(m => m.Field(f => f.PostText)
             .Query("Hey this is my first posted Document"))));
             var documents = searchRespose.Documents;
+            foreach(var document in documents)
+            {
+                Console.WriteLine($" Date posted is : {document.PostDate} User ID : {document.UserId}  POst Text = {document.PostText}");
+            }
+            
+            Console.ReadKey(true);
         }
     }
 }
