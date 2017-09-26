@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Nest;
 using Elasticsearch.Net;
 using SupportLibraryElasticSearch;
+using System.Diagnostics;
+using System.Net;
 
 namespace UIConsole
 {
@@ -21,16 +23,50 @@ namespace UIConsole
             settings = new ConnectionSettings(node).DefaultIndex("refactored_search");
             client = new ElasticClient(settings);
             var elasticSearch = new ElasticSearch(client);
+            LogEntry logEntry = new LogEntry();
+            
 
-            //Console.WriteLine(elasticSearch.CreateIndex());
+            Console.WriteLine("Enter the choice, what do you wanna perform , 1 to create index, 2 to search index");
+            logEntry.RequestTime = DateTime.Now;
+            string hostName = Dns.GetHostName();
+            logEntry.IPAddress = Dns.GetHostByName(hostName).AddressList[0].ToString();
+            var choice = Console.ReadLine();
 
-            var documents = elasticSearch.SearchResult();
-            foreach (var document in documents)
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+
+            if (choice == "1")
             {
-                Console.WriteLine($" Date posted is : {document.PostDate} User ID : {document.UserId}  POst Text = {document.PostText}");
+                Console.WriteLine(elasticSearch.CreateIndex());
+                stopwatch.Stop();
+                logEntry.RequestType = "Created Request";
             }
+            else if(choice == "2")
+            {
+                elasticSearch.SearchResult();
+                stopwatch.Stop();
+                logEntry.RequestType = "Searched for a Request";
+            }
+            
+
+
+            
+            
+
+            
+            logEntry.RespondTime = stopwatch.Elapsed;
+
+            Log log = new Log(logEntry, client);
+
+            log.CreateLogIndex();
+            
+
             Console.ReadKey(true);
         }
+
+
 
 
     }

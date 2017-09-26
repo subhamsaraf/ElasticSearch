@@ -20,14 +20,16 @@ namespace SupportLibraryElasticSearch
         {
             _client = client;
         }
-        public IReadOnlyCollection<Postdocument> SearchResult()
+        public void SearchResult()
         {
             var searchRespose = _client.Search<Postdocument>(s => s.From(0).Size(10)
            .Query(q => q.Match(m => m.Field(f => f.PostText)
            .Query("This is"))));
             var documents = searchRespose.Documents;
-
-            return documents;
+            foreach (var document in documents)
+            {
+                Console.WriteLine($" Date posted is : {document.PostDate} User ID : {document.UserId}  POst Text = {document.PostText}");
+            }
         }
 
 
