@@ -29,7 +29,8 @@ namespace UIConsole
             Console.WriteLine("Enter the choice, what do you wanna perform , 1 to create index, 2 to search index");
             logEntry.RequestTime = DateTime.Now;
             string hostName = Dns.GetHostName();
-            logEntry.IPAddress = Dns.GetHostByName(hostName).AddressList[0].ToString();
+            logEntry.IPAddress = Dns.GetHostEntry(hostName).AddressList[1].ToString();
+            logEntry.ID = Guid.NewGuid().ToString();
             var choice = Console.ReadLine();
 
 
@@ -51,18 +52,13 @@ namespace UIConsole
             }
             
 
-
-            
-            
-
-            
             logEntry.RespondTime = stopwatch.Elapsed;
 
             Log log = new Log(logEntry, client);
 
             log.CreateLogIndex();
-            
-
+            Console.Clear();
+            log.SearchLogIndex();
             Console.ReadKey(true);
         }
 

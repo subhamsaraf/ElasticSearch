@@ -39,5 +39,14 @@ namespace SupportLibraryElasticSearch
             set { _ipAdress = value; }
         }
 
+        private string _id;
+
+        public string ID
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
+
+
     }
 }
